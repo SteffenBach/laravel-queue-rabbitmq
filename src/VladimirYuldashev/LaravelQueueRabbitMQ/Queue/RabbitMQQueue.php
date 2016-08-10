@@ -73,7 +73,7 @@ class RabbitMQQueue extends Queue implements QueueContract
 
 		// push job to a queue
 		$message = new AMQPMessage($payload, [
-			'Content-Type'  => 'application/json',
+			'content_type'  => 'application/json',
 			'delivery_mode' => 2,
 		]);
 
