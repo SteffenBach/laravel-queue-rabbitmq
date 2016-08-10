@@ -66,6 +66,7 @@ class RabbitMQQueue extends Queue implements QueueContract
 	public function pushRaw($payload, $queue = null, array $options = [])
 	{
 		$queue = $this->getQueueName($queue);
+		$exchange = $this->getExchangeName($queue);
 		$this->declareQueue($queue);
 		if (isset($options['delay'])) {
 			$queue = $this->declareDelayedQueue($queue, $options['delay']);
@@ -85,7 +86,7 @@ class RabbitMQQueue extends Queue implements QueueContract
 		$message = new AMQPMessage($payload, $properties);
 
 		// push task to a queue
-		$this->channel->basic_publish($message, $queue, $queue);
+		$this->channel->basic_publish($message, $exchange, $queue);
 
 		return true;
 	}
@@ -137,6 +138,16 @@ class RabbitMQQueue extends Queue implements QueueContract
 	private function getQueueName($queue)
 	{
 		return $queue ?: $this->defaultQueue;
+	}
+
+	/**
+	 * @param string $queue
+	 *
+	 * @return string
+	 */
+	private function getExchangeName($queue)
+	{
+		return $this->configExchange['name'] ?: $this->getQueueName($queue);
 	}
 
 	/**
@@ -194,7 +205,7 @@ class RabbitMQQueue extends Queue implements QueueContract
 
 		// declare exchange
 		$this->channel->exchange_declare(
-			$name,
+			$this->getExchangeName($name),
 			$this->configExchange['type'],
 			$this->configExchange['passive'],
 			$this->configExchange['durable'],

@@ -96,6 +96,7 @@ return [
 				'passive'     => env('RABBITMQ_EXCHANGE_PASSIVE', false),
 				'durable'     => env('RABBITMQ_EXCHANGE_DURABLE', true), // the exchange will survive server restarts
 				'auto_delete' => env('RABBITMQ_EXCHANGE_AUTODELETE', false),
+				'name'        => null, // Optional, leave unset to default to queue name
 			],
 
 		],
